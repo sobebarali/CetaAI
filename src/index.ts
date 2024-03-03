@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { config } from "./configs";
 import limiter from "./services/rate-limiter";
 import morganMiddleware from "./middlewares/morgan";
+import pdfRouter from "./routes/pdfRoutes";
 
 const app: Express = express();
 const port = config.PORT;
@@ -36,6 +37,9 @@ app.use(helmet());
 app.use(limiter);
 app.use(morganMiddleware);
 
+
+//api routes
+app.use("/api", pdfRouter);
 
 // Handle undefined routes
 app.use((req, res, next) => {

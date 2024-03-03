@@ -1,11 +1,5 @@
 import Joi from "joi";
 
-const addPdfschema = Joi.object({
-  file: Joi.any()
-    .required()
-    .meta({ swaggerType: "file" })
-    .description("PDF file"),
-});
+const addPdfSchema = Joi.object({});
 
-export default addPdfschema;
-
+export default addPdfSchema;

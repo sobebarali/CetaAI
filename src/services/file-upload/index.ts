@@ -16,10 +16,13 @@ const s3PdfUpload = multer({
     s3,
     bucket: config.AWS_S3_PDF_BUCKET,
     metadata: function (req, file, cb) {
-      cb(null, { fieldName: file.fieldname });
+      cb(null, {
+        fieldName: file.fieldname,
+        mimetype: file.mimetype,
+      });
     },
     key: function (req, file, cb) {
-      cb(null, Date.now().toString());
+      cb(null, file.originalname);
     },
   }),
 });
