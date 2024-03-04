@@ -10,9 +10,11 @@ export const loadPdfDocumentFromPath = async (
   return document;
 };
 
-export const loadPdfDocumentFromBlob = async (
-  blob: Blob
-): Promise<Document[]> => {
+export const loadPdfDocumentFromBlob = async ({
+  blob,
+}: {
+  blob: Blob;
+}): Promise<Document[]> => {
   const loader = new PDFLoader(blob);
   const document = await loader.load();
   return document;
