@@ -4,6 +4,6 @@ import s3PdfUpload from "../../services/file-upload";
 
 const pdfRouter = express.Router();
 
-pdfRouter.post("/pdf/add", s3PdfUpload.array("file"),endpointAddPdf);
+pdfRouter.post("/pdf/add", s3PdfUpload.array("files"),endpointAddPdf);
 
 export default pdfRouter;

@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
-import Joi, { ValidationError } from "joi";
 import runValidation from "../../utils/runValidation";
 import addPdf from "../../controllers/pdfControllers/addPdf";
 import addPdfschema from "../../validators/pdfValidators/add";
 
 
-export type typePayload = { file: any };
+export type typePayload = {};
 
 export type typeResultData = {
   isAdded: boolean;
@@ -15,7 +14,6 @@ export type typeResultData = {
 export type typeResultError = {
   code: string;
   message: string;
-  validationError?: ValidationError;
   details?: Object;
 };
 

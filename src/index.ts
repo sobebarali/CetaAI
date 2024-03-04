@@ -4,7 +4,8 @@ import compression from "compression";
 import helmet from "helmet";
 import { config } from "./configs";
 import limiter from "./services/rate-limiter";
-import morganMiddleware from "./middlewares/morgan";
+import morgan from "morgan";
+// import morganMiddleware from "./middlewares/morgan";
 import pdfRouter from "./routes/pdfRoutes";
 
 const app: Express = express();
@@ -35,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(helmet());
 app.use(limiter);
-app.use(morganMiddleware);
+app.use(morgan("dev"));
 
 
 //api routes
