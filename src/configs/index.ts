@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-export let config = {
+let config = {
   PORT: process.env.PORT || 3000,
   LOG_LEVEL: process.env.LOG_LEVEL || "http",
   REDIS_PORT: process.env.REDIS_PORT || 6379,
@@ -22,5 +22,7 @@ export let config = {
   AWS_S3_PDF_BUCKET: process.env.AWS_S3_PDF_BUCKET || "",
   AWS_S3_PDF_REGION: process.env.AWS_S3_PDF_REGION || "ap-south-1",
 };
+
+export default config;
 
 

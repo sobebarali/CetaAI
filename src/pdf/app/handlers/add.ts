@@ -1,19 +1,15 @@
 import { Request, Response } from "express";
-import {
-  typeResult,
-  typeResultData,
-  typeResultError,
-} from "../../endpoints/pdfEndpoints/add";
-import getObject from "../../services/aws-s3/Object/getObject";
-import { config } from "../../configs";
-import { loadPdfDocumentFromBlob } from "../../services/loaders/document_loaders/pdf";
+import config from "../../../configs";
+import getObject from "../../../services/aws-s3/Object/getObject";
+import { loadPdfDocumentFromBlob } from "../../../services/loaders/document_loaders/pdf";
+import { typeResult, typeResultData, typeResultError } from "../types";
 
 export default async function addPdf({
   req,
   res,
 }: {
-    req: Request;
-    res: Response;
+  req: Request;
+  res: Response;
 }): Promise<typeResult> {
   let data: null | typeResultData = null;
   let error: null | typeResultError = null;
@@ -69,8 +65,6 @@ export default async function addPdf({
       const load = await loadPdfDocumentFromBlob({
         blob,
       });
-
-
     });
   }
 

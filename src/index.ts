@@ -2,11 +2,12 @@ import express, { Express } from "express";
 import cors from "cors";
 import compression from "compression";
 import helmet from "helmet";
-import { config } from "./configs";
+import config from "./configs";
 import limiter from "./services/rate-limiter";
 import morgan from "morgan";
 // import morganMiddleware from "./middlewares/morgan";
 import pdfRouter from "./routes/pdfRoutes";
+
 
 const app: Express = express();
 const port = config.PORT;

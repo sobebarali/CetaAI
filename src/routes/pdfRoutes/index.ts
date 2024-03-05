@@ -1,6 +1,6 @@
 import express from "express";
-import endpointAddPdf from "../../endpoints/pdfEndpoints/add";
 import s3PdfUpload from "../../services/file-upload";
+import endpointAddPdf from "../../pdf/controllers/api/add";
 
 const pdfRouter = express.Router();
 
