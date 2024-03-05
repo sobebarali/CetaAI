@@ -7,6 +7,7 @@ import limiter from "./services/rate-limiter";
 import morgan from "morgan";
 // import morganMiddleware from "./middlewares/morgan";
 import pdfRouter from "./routes/pdf";
+import connectDB from "./database";
 
 
 const app: Express = express();
@@ -59,7 +60,8 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+connectDB().then(() => {
+  app.listen(port, () => {
+    console.log(`[server]: Server is running at http://localhost:${port}`);
+  });
 });
