@@ -16,6 +16,8 @@ export default async function addPdf({
 
   const files = req.files as Express.MulterS3.File[];
 
+  console.log(files);
+
   if (!files) {
     error = {
       code: "FILE_REQUIRED",

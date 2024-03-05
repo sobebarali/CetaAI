@@ -1,4 +1,4 @@
-import express, { Express } from "express";
+import express, { Application } from "express";
 import cors from "cors";
 import compression from "compression";
 import helmet from "helmet";
@@ -10,7 +10,7 @@ import pdfRouter from "./routes/pdf";
 import connectDB from "./database";
 
 
-const app: Express = express();
+const app: Application = express();
 const port = config.PORT;
 
 const env = config.NODE_ENV;
@@ -65,3 +65,6 @@ connectDB().then(() => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
   });
 });
+
+export default app;
+
