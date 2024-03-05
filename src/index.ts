@@ -6,7 +6,7 @@ import config from "./configs";
 import limiter from "./services/rate-limiter";
 import morgan from "morgan";
 // import morganMiddleware from "./middlewares/morgan";
-import pdfRouter from "./routes/pdfRoutes";
+import pdfRouter from "./routes/pdf";
 
 
 const app: Express = express();
