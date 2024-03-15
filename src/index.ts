@@ -1,14 +1,12 @@
-import express, { Application } from "express";
-import cors from "cors";
 import compression from "compression";
+import cors from "cors";
+import express, { Application } from "express";
 import helmet from "helmet";
-import config from "./configs";
-import limiter from "./services/rate-limiter";
 import morgan from "morgan";
-// import morganMiddleware from "./middlewares/morgan";
-import pdfRouter from "./routes/pdf";
-import connectDB from "./database";
-
+import config from "./configs";
+import connectDB from "./database/mongo.database";
+import pdfRouter from "./pdf/controllers/routes/pdf.routes";
+import limiter from "./libs/rate-limiter";
 
 const app: Application = express();
 const port = config.PORT;
@@ -16,7 +14,6 @@ const port = config.PORT;
 const env = config.NODE_ENV;
 const isDevelopment = !env || env === "development";
 const prodCorsOrigin = config.PROD_CORS_ORIGIN;
-
 
 if (isDevelopment) {
   console.warn("Running in development mode - allowing CORS for all origins");
@@ -40,12 +37,11 @@ app.use(helmet());
 app.use(limiter);
 app.use(morgan("dev"));
 
-
 //api routes
 app.use("/api", pdfRouter);
 
 // Handle undefined routes
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).send({
     data: null,
     error: {
@@ -54,7 +50,6 @@ app.use((req, res, next) => {
     },
   });
 });
-
 
 app.get("/", (req, res) => {
   res.send("Hello World");
@@ -67,4 +62,3 @@ connectDB().then(() => {
 });
 
 export default app;
-

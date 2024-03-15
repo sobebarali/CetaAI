@@ -1,7 +1,7 @@
 import multer from "multer";
 import multerS3 from "multer-s3";
-import config  from "../../configs";
-import s3 from "../aws-s3";
+import config from "../../configs";
+import s3 from "../../libs/aws-s3";
 
 const s3PdfUpload = multer({
   storage: multerS3({
