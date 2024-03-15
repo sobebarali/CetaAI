@@ -22,6 +22,7 @@ let config = {
   AWS_S3_PDF_BUCKET: process.env.AWS_S3_PDF_BUCKET || "",
   AWS_S3_PDF_REGION: process.env.AWS_S3_PDF_REGION || "ap-south-1",
   MONGO_URI: process.env.MONGO_URI || "mongodb://localhost:27017/ceta-ai",
+  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || "",
 };
 
 export default config;
