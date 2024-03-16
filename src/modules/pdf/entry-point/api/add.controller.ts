@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
-import runValidation from "../../../utils/runValidation";
-import addPdf from "../../app/handlers/add.handler";
+import { Response } from "express";
+import { SessionRequest } from "supertokens-node/framework/express";
+import runValidation from "../../../../utils/runValidation";
+import addPdf from "../../core/handlers/add.handler";
 import addPdfSchema from "../validator/add.validator";
 
 export default async function endpointAddPdf(
-  req: Request,
+  req: SessionRequest,
   res: Response
 ): Promise<any> {
   let validationResult = runValidation({
