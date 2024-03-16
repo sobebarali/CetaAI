@@ -23,6 +23,16 @@ let config = {
   AWS_S3_PDF_REGION: process.env.AWS_S3_PDF_REGION || "ap-south-1",
   MONGO_URI: process.env.MONGO_URI || "mongodb://localhost:27017/ceta-ai",
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || "",
+  SUPER_TOKENS_CONNECTOR_URL: process.env.SUPER_TOKENS_CONNECTOR_URL || "",
+  SUPER_TOKENS_API_KEY: process.env.SUPER_TOKENS_API_KEY || "",
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
+  GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || "",
+  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || "",
+  APPLE_CLIENT_ID: process.env.APPLE_CLIENT_ID || "",
+  APPLE_KEY_ID: process.env.APPLE_KEY_ID || "",
+  APPLE_TEAM_ID: process.env.APPLE_TEAM_ID || "",
+  APPLE_PRIVATE_KEY: process.env.APPLE_PRIVATE_KEY || "",
 };
 
 export default config;

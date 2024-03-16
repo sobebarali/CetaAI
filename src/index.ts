@@ -25,9 +25,8 @@ const prodCorsOrigin = config.PROD_CORS_ORIGIN;
 supertokens.init({
   framework: "express",
   supertokens: {
-    connectionURI:
-      "https://st-dev-f6378210-e3b6-11ee-9ef8-9355384ffd39.aws.supertokens.io",
-    apiKey: "K38BYdbE3aL4R4wPzZ6Z1jhoRu",
+    connectionURI: config.SUPER_TOKENS_CONNECTOR_URL,
+    apiKey: config.SUPER_TOKENS_API_KEY,
   },
   appInfo: {
     appName: "CetaAI",
@@ -48,9 +47,8 @@ supertokens.init({
             thirdPartyId: "google",
             clients: [
               {
-                clientId:
-                  "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
-                clientSecret: "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",
+                clientId: config.GOOGLE_CLIENT_ID,
+                clientSecret: config.GOOGLE_CLIENT_SECRET,
               },
             ],
           },
@@ -60,8 +58,8 @@ supertokens.init({
             thirdPartyId: "github",
             clients: [
               {
-                clientId: "467101b197249757c71f",
-                clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd",
+                clientId: config.GITHUB_CLIENT_ID,
+                clientSecret: config.GITHUB_CLIENT_SECRET,
               },
             ],
           },
@@ -71,12 +69,11 @@ supertokens.init({
             thirdPartyId: "apple",
             clients: [
               {
-                clientId: "4398792-io.supertokens.example.service",
+                clientId: config.APPLE_CLIENT_ID,
                 additionalConfig: {
-                  keyId: "7M48Y4RYDL",
-                  privateKey:
-                    "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
-                  teamId: "YWQCXGJRJL",
+                  keyId: config.APPLE_KEY_ID,
+                  privateKey: config.APPLE_PRIVATE_KEY,
+                  teamId: config.APPLE_TEAM_ID,
                 },
               },
             ],
