@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 let config = {
-  PORT: process.env.PORT || 3000,
+  PORT: process.env.PORT || 8080,
   LOG_LEVEL: process.env.LOG_LEVEL || "http",
   REDIS_PORT: process.env.REDIS_PORT || 6379,
   REDIS_HOST: process.env.REDIS_HOST || "127.0.0.1",
