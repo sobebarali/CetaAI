@@ -33,6 +33,8 @@ let config = {
   APPLE_KEY_ID: process.env.APPLE_KEY_ID || "",
   APPLE_TEAM_ID: process.env.APPLE_TEAM_ID || "",
   APPLE_PRIVATE_KEY: process.env.APPLE_PRIVATE_KEY || "",
+  TWITTER_CLIENT_ID: process.env.TWITTER_CLIENT_ID || "",
+  TWITTER_CLIENT_SECRET: process.env.TWITTER_CLIENT_SECRET || "",
 };
 
 export default config;

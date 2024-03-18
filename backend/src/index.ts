@@ -8,12 +8,10 @@ import connectDB from "./database/mongo.database";
 import limiter from "./libs/rate-limiter";
 import pdfRouter from "./modules/pdf/entry-point/routes/pdf.routes";
 import supertokens from "supertokens-node";
-import { middleware } from "supertokens-node/framework/express";
-import { errorHandler } from "supertokens-node/framework/express";
-import Dashboard from "supertokens-node/recipe/dashboard";
-import Session from "supertokens-node/recipe/session";
-import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
-import EmailVerification from "supertokens-node/recipe/emailverification";
+import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
+import { SuperTokensConfig } from "./libs/super-tokens";
+import { verifySession } from "supertokens-node/recipe/session/framework/express";
+import Multitenancy from "supertokens-node/recipe/multitenancy";
 
 const app: Application = express();
 const port = config.PORT;
@@ -22,68 +20,7 @@ const env = config.NODE_ENV;
 const isDevelopment = !env || env === "development";
 const prodCorsOrigin = config.PROD_CORS_ORIGIN;
 
-supertokens.init({
-  framework: "express",
-  supertokens: {
-    connectionURI: config.SUPER_TOKENS_CONNECTOR_URL,
-    apiKey: config.SUPER_TOKENS_API_KEY,
-  },
-  appInfo: {
-    appName: "CetaAI",
-    apiDomain: "http://localhost:8080",
-    websiteDomain: "http://localhost:3000",
-    apiBasePath: "/auth",
-    websiteBasePath: "/auth",
-  },
-  recipeList: [
-    Dashboard.init(),
-    EmailVerification.init({
-      mode: "REQUIRED", // or "OPTIONAL"
-    }),
-    ThirdPartyEmailPassword.init({
-      providers: [
-        {
-          config: {
-            thirdPartyId: "google",
-            clients: [
-              {
-                clientId: config.GOOGLE_CLIENT_ID,
-                clientSecret: config.GOOGLE_CLIENT_SECRET,
-              },
-            ],
-          },
-        },
-        {
-          config: {
-            thirdPartyId: "github",
-            clients: [
-              {
-                clientId: config.GITHUB_CLIENT_ID,
-                clientSecret: config.GITHUB_CLIENT_SECRET,
-              },
-            ],
-          },
-        },
-        {
-          config: {
-            thirdPartyId: "apple",
-            clients: [
-              {
-                clientId: config.APPLE_CLIENT_ID,
-                additionalConfig: {
-                  keyId: config.APPLE_KEY_ID,
-                  privateKey: config.APPLE_PRIVATE_KEY,
-                  teamId: config.APPLE_TEAM_ID,
-                },
-              },
-            ],
-          },
-        },
-      ],
-    }),
-    Session.init(), // initializes session features
-  ],
-});
+supertokens.init(SuperTokensConfig);
 
 if (isDevelopment) {
   console.warn("Running in development mode - allowing CORS for all origins");
@@ -91,6 +28,7 @@ if (isDevelopment) {
     cors({
       origin: "http://localhost:3000",
       allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
+      methods: ["GET", "PUT","PATCH", "POST", "DELETE"],
       credentials: true,
     })
   );
@@ -101,6 +39,7 @@ if (isDevelopment) {
   const corsOptions = {
     origin: prodCorsOrigin, // Restrict to production domain
     allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
+    methods: ["GET", "PUT","PATCH", "POST", "DELETE"],
     credentials: true,
   };
   app.use(cors(corsOptions));
@@ -118,6 +57,24 @@ app.use(middleware());
 
 //api routes
 app.use("/api", pdfRouter);
+
+// An example API that requires session verification
+app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
+  let session = req.session;
+  res.send({
+      sessionHandle: session!.getHandle(),
+      userId: session!.getUserId(),
+      accessTokenPayload: session!.getAccessTokenPayload(),
+  });
+});
+
+// This API is used by the frontend to create the tenants drop down when the app loads.
+// Depending on your UX, you can remove this API.
+app.get("/tenants", async (req, res) => {
+  let tenants = await Multitenancy.listAllTenants();
+  res.send(tenants);
+});
+
 
 // AFTER all your routes
 app.use(errorHandler());
