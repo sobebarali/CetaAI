@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 let config = {
-  PORT: process.env.PORT || 8080,
+  PORT: process.env.PORT || 8000,
   LOG_LEVEL: process.env.LOG_LEVEL || "http",
   REDIS_PORT: process.env.REDIS_PORT || 6379,
   REDIS_HOST: process.env.REDIS_HOST || "127.0.0.1",
@@ -35,6 +35,7 @@ let config = {
   APPLE_PRIVATE_KEY: process.env.APPLE_PRIVATE_KEY || "",
   TWITTER_CLIENT_ID: process.env.TWITTER_CLIENT_ID || "",
   TWITTER_CLIENT_SECRET: process.env.TWITTER_CLIENT_SECRET || "",
+  GCP_PROJECT_ID: process.env.GCP_PROJECT_ID || "",
 };
 
 export default config;

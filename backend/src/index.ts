@@ -3,15 +3,19 @@ import cors from "cors";
 import express, { Application } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
-import config from "./configs";
-import connectDB from "./database/mongo.database";
-import limiter from "./libs/rate-limiter";
-import pdfRouter from "./modules/pdf/entry-point/routes/pdf.routes";
 import supertokens from "supertokens-node";
-import { middleware, errorHandler, SessionRequest } from "supertokens-node/framework/express";
-import { SuperTokensConfig } from "./libs/super-tokens";
-import { verifySession } from "supertokens-node/recipe/session/framework/express";
+import {
+  SessionRequest,
+  errorHandler,
+  middleware,
+} from "supertokens-node/framework/express";
 import Multitenancy from "supertokens-node/recipe/multitenancy";
+import { verifySession } from "supertokens-node/recipe/session/framework/express";
+import config from "./configs";
+import connectDB from "./database/google.database";
+import limiter from "./libs/rate-limiter";
+import { SuperTokensConfig } from "./libs/super-tokens";
+import pdfRouter from "./modules/pdf/routes/pdf.routes";
 
 const app: Application = express();
 const port = config.PORT;
@@ -22,29 +26,31 @@ const prodCorsOrigin = config.PROD_CORS_ORIGIN;
 
 supertokens.init(SuperTokensConfig);
 
-if (isDevelopment) {
-  console.warn("Running in development mode - allowing CORS for all origins");
-  app.use(
-    cors({
-      origin: "http://localhost:3000",
+if (process.env.NODE_ENV !== "test") {
+  if (isDevelopment) {
+    console.warn("Running in development mode - allowing CORS for all origins");
+    app.use(
+      cors({
+        origin: "http://localhost:3000",
+        allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
+        methods: ["GET", "PUT", "PATCH", "POST", "DELETE"],
+        credentials: true,
+      })
+    );
+  } else if (prodCorsOrigin) {
+    console.log(
+      `Running in production mode - allowing CORS for domain: ${prodCorsOrigin}`
+    );
+    const corsOptions = {
+      origin: prodCorsOrigin, // Restrict to production domain
       allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
-      methods: ["GET", "PUT","PATCH", "POST", "DELETE"],
+      methods: ["GET", "PUT", "PATCH", "POST", "DELETE"],
       credentials: true,
-    })
-  );
-} else if (prodCorsOrigin) {
-  console.log(
-    `Running in production mode - allowing CORS for domain: ${prodCorsOrigin}`
-  );
-  const corsOptions = {
-    origin: prodCorsOrigin, // Restrict to production domain
-    allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
-    methods: ["GET", "PUT","PATCH", "POST", "DELETE"],
-    credentials: true,
-  };
-  app.use(cors(corsOptions));
-} else {
-  console.warn("Production CORS origin not set, defaulting to no CORS.");
+    };
+    app.use(cors(corsOptions));
+  } else {
+    console.warn("Production CORS origin not set, defaulting to no CORS.");
+  }
 }
 
 app.use(express.text());
@@ -62,9 +68,9 @@ app.use("/api", pdfRouter);
 app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
   let session = req.session;
   res.send({
-      sessionHandle: session!.getHandle(),
-      userId: session!.getUserId(),
-      accessTokenPayload: session!.getAccessTokenPayload(),
+    sessionHandle: session!.getHandle(),
+    userId: session!.getUserId(),
+    accessTokenPayload: session!.getAccessTokenPayload(),
   });
 });
 
@@ -74,7 +80,6 @@ app.get("/tenants", async (req, res) => {
   let tenants = await Multitenancy.listAllTenants();
   res.send(tenants);
 });
-
 
 // AFTER all your routes
 app.use(errorHandler());
@@ -94,10 +99,10 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-connectDB().then(() => {
+if (process.env.NODE_ENV !== "test") {
   app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
   });
-});
+}
 
 export default app;

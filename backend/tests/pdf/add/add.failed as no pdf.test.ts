@@ -2,8 +2,6 @@ import { expect, test } from "@jest/globals";
 import app from "../../../src";
 import request from "supertest";
 
-
-
 test("should return the correct result when no files are provided", async () => {
     const files = {};
     const response = await request(app).post("/api/pdf/add").send(files)
