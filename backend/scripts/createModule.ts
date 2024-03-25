@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import readline from "readline";
+import generateTypesCode from "./data/types/generateTypesCode";
+import generateValidatorCode from "./data/validators/generateValidatorCode";
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -12,6 +14,38 @@ const getModuleName = () => {
     rl.question("Enter the module name: ", (answer) => {
       resolve(answer);
     });
+  });
+};
+
+const confirmTypes = () => {
+  return new Promise<void>((resolve) => {
+    rl.question("Have you defined the types? (yes/no): ", (answer) => {
+      if (answer.toLowerCase() === "yes") {
+        resolve();
+      } else {
+        console.log("Please define the types and run the script again.");
+        process.exit(1);
+      }
+    });
+  });
+};
+
+
+const confirmValidators = () => {
+  return new Promise<void>((resolve) => {
+    rl.question(
+      "Have you defined the validation schemas? (yes/no): ",
+      (answer) => {
+        if (answer.toLowerCase() === "yes") {
+          resolve();
+        } else {
+          console.log(
+            "Please define the validation schemas and run the script again."
+          );
+          process.exit(1);
+        }
+      }
+    );
   });
 };
 
@@ -29,6 +63,45 @@ const createModule = async () => {
   if (!fs.existsSync(modulePath)) {
     fs.mkdirSync(modulePath);
   }
+
+  // Create the types directory if it doesn't exist
+  const typesPath = path.join(modulePath, "types");
+  if (!fs.existsSync(typesPath)) {
+    fs.mkdirSync(typesPath);
+  }
+
+  // Create moduleName.types.ts file if it doesn't exist
+  const typesFilePath = path.join(typesPath, `${moduleName}.types.ts`);
+  crudOperations.forEach((operation) => {
+    const filePath = path.join(typesPath, `${operation}.types.ts`);
+    if (!fs.existsSync(filePath)) {
+      const typesCode = generateTypesCode();
+      fs.writeFileSync(filePath, typesCode);
+      console.log(`Please define the types in ${filePath} and confirm.`);
+    }
+  });
+
+  // Create the validators directory if it doesn't exist
+  const validatorsPath = path.join(modulePath, "validators");
+  if (!fs.existsSync(validatorsPath)) {
+    fs.mkdirSync(validatorsPath);
+  }
+
+  
+
+  // Create missing CRUD files in the validators directory
+  crudOperations.forEach((operation) => {
+    const filePath = path.join(validatorsPath, `${operation}.validator.ts`);
+    if (!fs.existsSync(filePath)) {
+      const validatorCode = generateValidatorCode(moduleName, operation);
+      fs.writeFileSync(filePath, validatorCode);
+      console.log(
+        `Please define the validation schema in ${filePath} and confirm.`
+      );
+    }
+  });
+
+  await confirmValidators();
 
   // Create the api directory if it doesn't exist
   const apiPath = path.join(modulePath, "api");
@@ -83,32 +156,6 @@ const createModule = async () => {
   if (!fs.existsSync(routesFilePath)) {
     fs.writeFileSync(routesFilePath, "");
   }
-
-  // Create the types directory if it doesn't exist
-  const typesPath = path.join(modulePath, "types");
-  if (!fs.existsSync(typesPath)) {
-    fs.mkdirSync(typesPath);
-  }
-
-  // Create moduleName.types.ts file if it doesn't exist
-  const typesFilePath = path.join(typesPath, `${moduleName}.types.ts`);
-  if (!fs.existsSync(typesFilePath)) {
-    fs.writeFileSync(typesFilePath, "");
-  }
-
-  // Create the validators directory if it doesn't exist
-  const validatorsPath = path.join(modulePath, "validators");
-  if (!fs.existsSync(validatorsPath)) {
-    fs.mkdirSync(validatorsPath);
-  }
-
-  // Create missing CRUD files in the validators directory
-  crudOperations.forEach((operation) => {
-    const filePath = path.join(validatorsPath, `${operation}.validator.ts`);
-    if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, "");
-    }
-  });
 
   // Create the tests directory if it doesn't exist
   const testsPath = path.join("tests", moduleName);
