@@ -3,20 +3,12 @@ import cors from "cors";
 import express, { Application } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
-import supertokens from "supertokens-node";
-import {
-  SessionRequest,
-  errorHandler,
-  middleware,
-} from "supertokens-node/framework/express";
-import Multitenancy from "supertokens-node/recipe/multitenancy";
-import { verifySession } from "supertokens-node/recipe/session/framework/express";
 import config from "./configs";
-import connectDB from "./database/google.database";
 import limiter from "./libs/rate-limiter";
-import { SuperTokensConfig } from "./libs/super-tokens";
 import pdfRouter from "./modules/pdf/routes/pdf.routes";
 import organisationRouter from "./modules/organization/routes/organization.routes";
+import authRouter from "./modules/auth/routes/auth.routes";
+import validateToken from "./middleware/auth.middleware";
 
 const app: Application = express();
 const port = config.PORT;
@@ -25,15 +17,13 @@ const env = config.NODE_ENV;
 const isDevelopment = !env || env === "development";
 const prodCorsOrigin = config.PROD_CORS_ORIGIN;
 
-supertokens.init(SuperTokensConfig);
-
 if (process.env.NODE_ENV !== "test") {
   if (isDevelopment) {
     console.warn("Running in development mode - allowing CORS for all origins");
     app.use(
       cors({
         origin: "http://localhost:3000",
-        allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
+        allowedHeaders: ["content-type"],
         methods: ["GET", "PUT", "PATCH", "POST", "DELETE"],
         credentials: true,
       })
@@ -44,7 +34,7 @@ if (process.env.NODE_ENV !== "test") {
     );
     const corsOptions = {
       origin: prodCorsOrigin, // Restrict to production domain
-      allowedHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
+      allowedHeaders: ["content-type"],
       methods: ["GET", "PUT", "PATCH", "POST", "DELETE"],
       credentials: true,
     };
@@ -61,31 +51,19 @@ app.use(compression());
 app.use(helmet());
 app.use(limiter);
 app.use(morgan("dev"));
-app.use(middleware());
+
 
 //api routes
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
+
+
+app.use("/api", authRouter);
 app.use("/api", pdfRouter);
-app.use("/api", organisationRouter);
+app.use("/api",validateToken, organisationRouter);
 
-// An example API that requires session verification
-app.get("/sessioninfo", verifySession(), async (req: SessionRequest, res) => {
-  let session = req.session;
-  res.send({
-    sessionHandle: session!.getHandle(),
-    userId: session!.getUserId(),
-    accessTokenPayload: session!.getAccessTokenPayload(),
-  });
-});
 
-// This API is used by the frontend to create the tenants drop down when the app loads.
-// Depending on your UX, you can remove this API.
-app.get("/tenants", async (req, res) => {
-  let tenants = await Multitenancy.listAllTenants();
-  res.send(tenants);
-});
-
-// AFTER all your routes
-app.use(errorHandler());
 
 // Handle undefined routes
 app.use((req, res) => {
@@ -98,9 +76,7 @@ app.use((req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(port, () => {
