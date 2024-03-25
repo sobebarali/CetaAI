@@ -1,17 +1,22 @@
-
 export type typePayload = {
-  // Define the typePayload here
+  email?: string;
+  phoneNumber?: string;
+  emailVerified?: boolean;
+  password?: string;
+  displayName?: string;
+  photoURL?: string;
+  disabled?: boolean;
 };
 
 export type typeResultData = {
-  // Define the typeResultData here
+  code: string;
+  message: string;
+  user: Object;
 };
 
 export type typeResultError = {
-  status: number;
   code: string;
   message: string;
-  details?: Object;
 };
 
 export type typeResult = {
@@ -19,4 +24,3 @@ export type typeResult = {
   error: null | typeResultError;
   meta?: null | Object;
 };
-  
