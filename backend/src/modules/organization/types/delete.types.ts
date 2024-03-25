@@ -1,13 +1,10 @@
+
 export type typePayload = {
-  userId: string;
-  orgId: string;
-  name: string;
+  // Define the typePayload here
 };
 
 export type typeResultData = {
-  userId: string;
-  orgId: string;
-  name: string;
+  // Define the typeResultData here
 };
 
 export type typeResultError = {
@@ -21,3 +18,4 @@ export type typeResult = {
   error: null | typeResultError;
   meta?: null | Object;
 };
+  

@@ -1,26 +1,43 @@
-import { Response } from "express";
-import { SessionRequest } from "supertokens-node/framework/express";
-import config from "../../../configs";
-import getObject from "../../../libs/aws-s3/Object/getObject";
-import { loadPdfDocumentFromBlob } from "../../../services/loaders/document_loaders/pdf/pdf.loader";
+import { Request, Response } from "express";
 import {
+  typePayload,
   typeResult,
   typeResultData,
   typeResultError,
-} from "../types/organisation.types";
+} from "../types/create.types";
+import organizationCreate from "../repository/create.repository";
 
 export default async function createOrganisation({
   req,
   res,
 }: {
-  req: SessionRequest;
+  req: Request;
   res: Response;
 }): Promise<typeResult> {
   let data: null | typeResultData = null;
   let error: null | typeResultError = null;
 
-  // let userId = req.session!.getUserId();
+  try {
+    let userId = req.user.user_id;
+    
+    const { name, description } = req.body as typePayload;
+    
+    let createdOrg = await organizationCreate({
+      userId,
+      name,
+      description,
+    });
 
- 
+    data = {
+      orgId: createdOrg.id,
+      name,
+    };
+  } catch (err: any) {
+    error = {
+      code: err.errorCode || "SOMETHING_WENT_WRONG",
+      message: err.message || "Something went wrong",
+    };
+  }
+
   return { data, error };
 }

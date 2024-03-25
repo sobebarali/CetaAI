@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
-import { SessionRequest } from "supertokens-node/framework/express";
 import runValidation from "../../../utils/runValidation";
 import createSchema from "../validators/create.validator";
 import createOrganisation from "../handlers/create.handler";
 
 export default async function endpointCreateOrganisation(
-  req: SessionRequest | Request,
+  req: Request,
   res: Response
 ): Promise<any> {
   let validationResult = runValidation({

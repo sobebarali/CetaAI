@@ -1,7 +1,7 @@
-import { randomUUID } from "crypto";
-import datastore from "../../../database/google.database";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import db from "../../../database/firebase.database";
 import { CustomError } from "../../../utils/customError";
-export default async function createOrganization({
+export default async function organizationCreate({
   userId,
   name,
   description,
@@ -11,32 +11,18 @@ export default async function createOrganization({
   description: string;
 }) {
   try {
-    let orgId = `org-${randomUUID()}`;
-
-    const key = datastore.key({
-      namespace: "Organization",
-      path: [userId, orgId],
-    });
-
-    const currentTime = new Date().toISOString();
-
-    const entity = {
-      key,
-      data: {
-        orgId,
+    let createResult = await addDoc(
+      collection(db, "users", userId, "organizations"),
+      {
         userId,
         name,
         description,
-        createdAt: currentTime,
-        updatedAt: currentTime,
-      },
-    };
-
-    await datastore.insert(entity);
-
-    return entity;
+        createdAt: serverTimestamp(),
+      }
+    );
+    return createResult;
   } catch (error) {
     console.error("#6473812538 Error creating organization", error);
-    throw new CustomError(500, "DB_ERROR","Error creating organization"); 
+    throw new CustomError( "DB_ERROR", "Error creating organization");
   }
 }
