@@ -16,7 +16,7 @@ export const loadPdfDocumentFromBlob = async ({
   blob,
 }: {
   blob: Blob;
-}): Promise<Document[]> => {
+  }): Promise<Document[]> => {
   const loader = new PDFLoader(blob);
   const document = await loader.load();
   return document;

@@ -1,1 +1,0 @@
-TO update to latest npm version, run the following command: npx npm-check-updates
