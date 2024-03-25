@@ -1,4 +1,6 @@
-export type typePayload = {};
+export type typePayload = {
+  email: string;
+};
 
 export type typeResultData = {
   code: string;

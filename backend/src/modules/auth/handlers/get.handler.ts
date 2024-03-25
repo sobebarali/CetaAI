@@ -6,6 +6,7 @@ import {
   typeResultError,
 } from "../types/get.types";
 import { admin } from "../../../libs/firebase-admin";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 
 export default async function getUser({
   req,
@@ -18,9 +19,16 @@ export default async function getUser({
   let error: null | typeResultError = null;
 
   let userId = req.user.user_id;
+  let email = req.body.email as typePayload["email"];
 
   try {
-    let User = await admin.auth().getUser(userId);
+    let User = {} as UserRecord;
+
+    if (email) {
+      User = await admin.auth().getUserByEmail(email);
+    } else {
+      User = await admin.auth().getUser(userId);
+    }
 
     data = {
       code: "USER_FETCHED",
