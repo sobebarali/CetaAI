@@ -28,3 +28,23 @@ test("user registration success", async () => {
   expect(response.body.data.message).toBe("User created successfully");
   expect(response.body.error).toBeNull();
 });
+
+test("2nd user registration success", async () => {
+  const email = "sobebar2@test.com";
+  const password = "password1234";
+
+  const response = await request(app).post("/api/auth/register").send({
+    email,
+    password,
+  });
+
+  expect(response.status).toBe(200);
+  expect(response.body).toEqual({
+    data: {
+      status: 200,
+      code: "USER_CREATED",
+      message: "User created successfully",
+    },
+    error: null,
+  });
+});
