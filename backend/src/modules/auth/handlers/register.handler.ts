@@ -21,9 +21,9 @@ export default async function registerWithEmailAndPassword({
   const { email, password } = req.body as typePayload;
 
   try {
-    const auth =  getAuth(firebaseAPP);
+    const auth = await getAuth(firebaseAPP);
 
-    createUserWithEmailAndPassword(auth, email, password);
+    await createUserWithEmailAndPassword(auth, email, password);
 
     data = {
       code: "USER_CREATED",
