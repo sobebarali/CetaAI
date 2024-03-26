@@ -1,28 +1,25 @@
-import datastore from "../../../database/google.database";
-import { GetResponse } from "@google-cloud/datastore/build/src/request";
+import { doc, getDoc } from "firebase/firestore";
+import db from "../../../database/firebase.database";
 import { CustomError } from "../../../utils/customError";
 
-export default async function getOrganization({
+export default async function organizationGet({
+  userId,
   orgId,
 }: {
+  userId: string;
   orgId: string;
-  }): Promise<GetResponse> {
+}) {
   try {
-    const key = datastore.key({
-      namespace: "Organization",
-      path: [orgId],
-    });
+    const docRef = doc(db, "users", userId, "organizations", orgId);
+    const docSnap = await getDoc(docRef);
 
-
-    const [entity] = await datastore.get(key);
-
-    if (!entity) {
-      throw new CustomError( "ORG_NOT_FOUND", "Organization not found");
+    if (!docSnap.exists()) {
+      throw new CustomError("NOT_FOUND", "Organization not found");
+    } else {
+      return docSnap.data();
     }
-
-    return entity;
-  } catch (error) {
-     console.error("#4678321578 Error fetching organization", error);
-     throw new CustomError( "DB_ERROR", "Error fetching organization"); 
+  } catch (error: any) {
+    console.error("#4678321578 Error fetching organization", error);
+    throw new CustomError("DB_ERROR", "Error fetching organization");
   }
 }

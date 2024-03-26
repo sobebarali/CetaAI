@@ -3,7 +3,7 @@ import app from "../../../src";
 import request from "supertest";
 
 test("organisation create failed Unauthorized", async () => {
-  const createOrg = await request(app).post("/api/organisation/add").send({
+  const createOrg = await request(app).post("/api/organisation").send({
     name: "Test Organisation",
     description: "Test Organisation Description",
   });

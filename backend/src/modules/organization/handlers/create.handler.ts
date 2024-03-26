@@ -18,7 +18,7 @@ export default async function createOrganisation({
   let error: null | typeResultError = null;
 
   try {
-    let userId = req.user.user_id;
+    let userId = req?.user?.user_id;
     
     const { name, description } = req.body as typePayload;
     

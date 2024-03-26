@@ -1,21 +1,22 @@
-
 export type typePayload = {
-  // Define the typePayload here
+  orgId: string;
 };
 
 export type typeResultData = {
-  // Define the typeResultData here
+  userId: string;
+  orgId: string;
+  name: string;
+  description: string;
+  createdAt: any;
+  updatedAt: any;
 };
 
 export type typeResultError = {
   code: string;
   message: string;
-  details?: Object;
 };
 
 export type typeResult = {
   data: null | typeResultData;
   error: null | typeResultError;
-  meta?: null | Object;
 };
-  

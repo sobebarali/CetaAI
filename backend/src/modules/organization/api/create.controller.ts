@@ -17,7 +17,7 @@ export default async function endpointCreateOrganisation(
       data: null,
       error: {
         code: "VALIDATION_ERROR",
-        message: validationResult.error,
+        message: validationResult.error.details[0].message,
       },
     });
   } else {

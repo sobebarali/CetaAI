@@ -28,7 +28,7 @@ export default async function loginWithEmailAndPassword({
     data = {
       code: "LOGIN_SUCCESS",
       message: "User logged in successfully",
-      access_token: await loginResult.user.getIdToken()
+      access_token: await loginResult.user.getIdToken(true)
     };
   } catch (err: any) {
     console.error(`886993 login error: `, err);

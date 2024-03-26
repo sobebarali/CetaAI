@@ -15,7 +15,7 @@ test("organisation create success", async () => {
   let access_token = login.body.data.access_token;
 
   const createOrg = await request(app)
-    .post("/api/organisation/add")
+    .post("/api/organisation")
     .set("Authorization", `Bearer ${access_token}`)
     .send({
       name: "Test Organisation",

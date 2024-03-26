@@ -1,40 +1,26 @@
-import datastore from "../../../database/google.database";
+import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import db from "../../../database/firebase.database";
 import { CustomError } from "../../../utils/customError";
 
-export default async function updateOrganization({
+export default async function organizationUpdate({
+  userId,
   orgId,
-  name,
-  description,
+  updateData,
 }: {
+  userId: string;
   orgId: string;
-  name?: string;
-  description?: string;
+  updateData: Partial<{
+    name: string;
+    description: string;
+    updatedAt: any;
+  }>;
 }) {
   try {
-   const key = datastore.key({
-     namespace: "Organization",
-     path: [orgId],
-   });
-
-    const [entity] = await datastore.get(key);
-
-    if (!entity) {
-      throw new CustomError( "ORG_NOT_FOUND", "Organization not found");
-    }
-     
-    await datastore.update({
-      key,
-      data: {
-        ...entity,
-        name: name || entity.name,
-        description: description || entity.description,
-        updatedAt: new Date().toISOString(),
-      },
-    });
-
-    return entity;
-  } catch (error) {
-    console.error("#675892376 Error updating organization", error);
-    throw new CustomError( "DB_ERROR", "Error updating organization");
+    updateData.updatedAt = serverTimestamp();
+    const docRef = doc(db, "users", userId, "organizations", orgId);
+    await updateDoc(docRef, updateData);
+  } catch (error: any) {
+    console.error("#4678321580 Error updating organization", error);
+    throw new CustomError("DB_ERROR", "Error updating organization");
   }
 }
