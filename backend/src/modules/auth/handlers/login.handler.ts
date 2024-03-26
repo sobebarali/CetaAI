@@ -31,7 +31,7 @@ export default async function loginWithEmailAndPassword({
       access_token: await loginResult.user.getIdToken()
     };
   } catch (err: any) {
-    console.error(`886993 login error: `, error);
+    console.error(`886993 login error: `, err);
     error = {
       code: err.code || "SOMETHING_WENT_WRONG",
       message: err.message || "Something went wrong",

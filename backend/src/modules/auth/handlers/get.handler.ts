@@ -36,7 +36,7 @@ export default async function getUser({
       user: User.toJSON(),
     };
   } catch (err: any) {
-    console.error(`6428987 GET USER -> error: `, error);
+    console.error(`6428987 GET USER -> error: `, err);
     error = {
       code: err.code || "SOMETHING_WENT_WRONG",
       message: err.message || "Something went wrong",

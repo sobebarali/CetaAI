@@ -48,7 +48,7 @@ export default async function updateUser({
       user: updatedUser.toJSON(),
     };
   } catch (err: any) {
-    console.error(`6428987 UPDATE USER -> error: `, error);
+    console.error(`6428987 UPDATE USER -> error: `, err);
     error = {
       code: err.code || "SOMETHING_WENT_WRONG",
       message: err.message || "Something went wrong",
