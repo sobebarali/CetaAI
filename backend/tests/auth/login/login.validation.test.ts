@@ -36,7 +36,6 @@ test("user login password validation fail", async () => {
     password,
   });
     
-  console.log(response.body);
 
   expect(response.status).toBe(400);
   expect(response.body).toEqual({

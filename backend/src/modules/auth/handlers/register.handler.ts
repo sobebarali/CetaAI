@@ -1,4 +1,4 @@
-import {Request,Response } from "express";
+import { Request, Response } from "express";
 import {
   typePayload,
   typeResult,
@@ -30,7 +30,7 @@ export default async function registerWithEmailAndPassword({
       message: "User created successfully",
     };
   } catch (err: any) {
-        console.error(`886993 register error: `, error);
+    console.error(`886993 register error: `, err);
     error = {
       code: err.code || "SOMETHING_WENT_WRONG",
       message: err.message || "Something went wrong",
