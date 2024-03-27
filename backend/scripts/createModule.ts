@@ -1,8 +1,14 @@
 import fs from "fs";
 import path from "path";
 import readline from "readline";
+import { format } from "prettier";
 import generateTypesCode from "./data/types/generateTypesCode";
 import generateValidatorCode from "./data/validators/generateValidatorCode";
+import generateHandlerCode from "./data/handlers/generateHandlerCode";
+import generateRepositoryCode from "./data/repository/generateRepositoryCode";
+import generateControllerCode from "./data/api/generateControllerCode";
+import generateRouteCode from "./data/routes/generateRouteCode";
+
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -15,6 +21,19 @@ const getModuleName = () => {
       resolve(answer);
     });
   });
+};
+
+const formatCode = async (filePath: string) => {
+  const code = fs.readFileSync(filePath, "utf-8");
+  const formattedCode = format(code, {
+    parser: "typescript",
+    singleQuote: true,
+    trailingComma: "es5",
+    printWidth: 80,
+    tabWidth: 2,
+    semi: true,
+  });
+  fs.writeFileSync(filePath, await formattedCode);
 };
 
 const confirmTypes = () => {
@@ -34,13 +53,13 @@ const confirmTypes = () => {
 const confirmValidators = () => {
   return new Promise<void>((resolve) => {
     rl.question(
-      "Have you defined the validation schemas? (yes/no): ",
+      "Have you verified the validation schemas? (yes/no): ",
       (answer) => {
         if (answer.toLowerCase() === "yes") {
           resolve();
         } else {
           console.log(
-            "Please define the validation schemas and run the script again."
+            "Please verify the validation schemas and run the script again."
           );
           process.exit(1);
         }
@@ -71,15 +90,17 @@ const createModule = async () => {
   }
 
   // Create moduleName.types.ts file if it doesn't exist
-  const typesFilePath = path.join(typesPath, `${moduleName}.types.ts`);
   crudOperations.forEach((operation) => {
     const filePath = path.join(typesPath, `${operation}.types.ts`);
     if (!fs.existsSync(filePath)) {
       const typesCode = generateTypesCode();
       fs.writeFileSync(filePath, typesCode);
+      formatCode(filePath);
       console.log(`Please define the types in ${filePath} and confirm.`);
     }
   });
+
+  await confirmTypes();
 
   // Create the validators directory if it doesn't exist
   const validatorsPath = path.join(modulePath, "validators");
@@ -87,33 +108,34 @@ const createModule = async () => {
     fs.mkdirSync(validatorsPath);
   }
 
-  
-
   // Create missing CRUD files in the validators directory
   crudOperations.forEach((operation) => {
     const filePath = path.join(validatorsPath, `${operation}.validator.ts`);
     if (!fs.existsSync(filePath)) {
       const validatorCode = generateValidatorCode(moduleName, operation);
       fs.writeFileSync(filePath, validatorCode);
+      formatCode(filePath);
       console.log(
-        `Please define the validation schema in ${filePath} and confirm.`
+        `Please verify the validation schema in ${filePath} and confirm.`
       );
     }
   });
 
   await confirmValidators();
 
-  // Create the api directory if it doesn't exist
-  const apiPath = path.join(modulePath, "api");
-  if (!fs.existsSync(apiPath)) {
-    fs.mkdirSync(apiPath);
+  // Create the repository directory if it doesn't exist
+  const repositoryPath = path.join(modulePath, "repository");
+  if (!fs.existsSync(repositoryPath)) {
+    fs.mkdirSync(repositoryPath);
   }
 
-  // Create missing CRUD files in the api directory
+  // Create missing CRUD files in the repository directory
   crudOperations.forEach((operation) => {
-    const filePath = path.join(apiPath, `${operation}.controller.ts`);
+    const filePath = path.join(repositoryPath, `${operation}.repository.ts`);
     if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, "");
+      const repositoryCode = generateRepositoryCode(moduleName, operation);
+      fs.writeFileSync(filePath, repositoryCode);
+      formatCode(filePath);
     }
   });
 
@@ -127,21 +149,25 @@ const createModule = async () => {
   crudOperations.forEach((operation) => {
     const filePath = path.join(handlersPath, `${operation}.handler.ts`);
     if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, "");
+      const handlerCode = generateHandlerCode(moduleName, operation);
+      fs.writeFileSync(filePath, handlerCode);
+      formatCode(filePath);
     }
   });
 
-  // Create the repository directory if it doesn't exist
-  const repositoryPath = path.join(modulePath, "repository");
-  if (!fs.existsSync(repositoryPath)) {
-    fs.mkdirSync(repositoryPath);
+  // Create the api directory if it doesn't exist
+  const apiPath = path.join(modulePath, "api");
+  if (!fs.existsSync(apiPath)) {
+    fs.mkdirSync(apiPath);
   }
 
-  // Create missing CRUD files in the repository directory
+  // Create missing CRUD files in the api directory
   crudOperations.forEach((operation) => {
-    const filePath = path.join(repositoryPath, `${operation}.repository.ts`);
+    const filePath = path.join(apiPath, `${operation}.controller.ts`);
     if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, "");
+      const controllerCode = generateControllerCode(moduleName, operation);
+      fs.writeFileSync(filePath, controllerCode);
+      formatCode(filePath);
     }
   });
 
@@ -154,7 +180,9 @@ const createModule = async () => {
   // Create moduleName.routes.ts file if it doesn't exist
   const routesFilePath = path.join(routesPath, `${moduleName}.routes.ts`);
   if (!fs.existsSync(routesFilePath)) {
-    fs.writeFileSync(routesFilePath, "");
+    let routeCode = generateRouteCode(moduleName, crudOperations);
+    fs.writeFileSync(routesFilePath, routeCode);
+    formatCode(routesFilePath);
   }
 
   // Create the tests directory if it doesn't exist
