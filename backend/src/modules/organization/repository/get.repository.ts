@@ -19,7 +19,11 @@ export default async function organizationGet({
       return docSnap.data();
     }
   } catch (error: any) {
-    console.error("#4678321578 Error fetching organization", error);
-    throw new CustomError("DB_ERROR", "Error fetching organization");
+    console.error("#5468712498 Error fetching organization", error);
+    if (error.errorCode === "NOT_FOUND") {
+      throw new CustomError(error.errorCode, error.message);
+    } else {
+      throw new CustomError("DB_ERROR", "Error fetching organization");
+    }
   }
 }
